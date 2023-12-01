@@ -63,8 +63,8 @@
 
 /* macros */
 #define STRCP(dest, src)\
-    { memcpy((void*)(dest), src, MIN(strlen(src), ARRAY_LENGTH(dest) - 1));\
-    (dest)[ARRAY_LENGTH(dest) - 1] = '\0'; }
+    { memcpy((void*)(dest), src, MIN(strlen(src), LENGTH(dest) - 1));\
+    (dest)[LENGTH(dest) - 1] = '\0'; }
 
 
 /* types */
@@ -102,7 +102,7 @@ error_t beatmap_load(beatmap_t* beatmap, const char* path) {
 
     memset(beatmap, 0, sizeof(beatmap_t));
 
-    LOGF("loading beatmap \"%s\" ...", path);
+    LOG("loading beatmap \"%s\" ...", path);
     CHECK_ERROR_LOG_PROPAGATE(load_files(&files, path), "Failed to load beatmap files");
 
     LOG("parsing beatmap ...");
@@ -139,7 +139,7 @@ void beatmap_debug_print(beatmap_t* beatmap) {
     assert(beatmap != NULL);
 
     LOG("\nBeatmap info:");
-    LOGF_DESC(
+    PRINTLN(
         "\tid: %d\n"
         "\ttitle: %s\n",
         beatmap->id,
@@ -147,7 +147,7 @@ void beatmap_debug_print(beatmap_t* beatmap) {
     );
     for (int i = 0; i < kv_size(beatmap->difficulties); i++) {
         difficulty_t* d = &kv_A(beatmap->difficulties, i);
-        LOGF_DESC(
+        PRINTLN(
             "Difficulty[%d]\n"
             "\tid: %d\n"
             "\tname: %s\n"
@@ -164,21 +164,21 @@ void beatmap_debug_print(beatmap_t* beatmap) {
 
         const int MAX_OBJECTS_SHOWN = 50;
 
-        LOGF_DESC("\tTiming points[%lu]:", kv_size(d->timing_points));
+        PRINTLN("\tTiming points[%lu]:", kv_size(d->timing_points));
         for (int j = 0; j < MIN(MAX_OBJECTS_SHOWN, kv_size(d->timing_points)); j++) {
             timing_point_t* tm = &kv_A(d->timing_points, j);
-            LOGF_DESC("\t\tTM[%d] at %f SV=%f BPM=%f", j, tm->time, tm->SV, tm->BPM);
+            PRINTLN("\t\tTM[%d] at %f SV=%f BPM=%f", j, tm->time, tm->SV, tm->BPM);
         }
         if (kv_size(d->timing_points) > MAX_OBJECTS_SHOWN)
-            LOG_DESC("\t\t...");
+            PRINTLN("\t\t...");
 
-        LOGF_DESC("\tHit objects[%lu]:", kv_size(d->hitobjects));
+        PRINTLN("\tHit objects[%lu]:", kv_size(d->hitobjects));
         for (int j = 0; j < MIN(MAX_OBJECTS_SHOWN, kv_size(d->hitobjects)); j++) {
             hitobject_t* ho = &kv_A(d->hitobjects, j);
-            LOGF_DESC("\t\tHO[%d] at %f to %f COL=%d", j, ho->start_time, ho->end_time, ho->column);
+            PRINTLN("\t\tHO[%d] at %f to %f COL=%d", j, ho->start_time, ho->end_time, ho->column);
         }
         if (kv_size(d->hitobjects) > MAX_OBJECTS_SHOWN)
-            LOG_DESC("\t\t...");
+            PRINTLN("\t\t...");
     }
 }
 
@@ -225,27 +225,27 @@ error_t load_files(beatmapset_files_t* files, const char* path) {
             size_t count = fread(f.data, 1, f.size, file);
             f.data[count] = '\0';
 
-            strncpy(f.name, GetFileName(fs.paths[i]), ARRAY_LENGTH(f.name));
+            strncpy(f.name, GetFileName(fs.paths[i]), LENGTH(f.name));
 
             if (f.data == NULL || f.size == 0) {
-                LOGF("Could not read \"%s\"", fs.paths[i]);
+                LOG("Could not read \"%s\"", fs.paths[i]);
                 return ERROR_UNDEFINED;
             }
 
             kv_push(file_t, *files, f);
 
-            LOGF("loaded \"%s\" (%s)", GetFileName(fs.paths[i]), humanize_bytesize(f.size));
+            LOG("loaded \"%s\" (%s)", GetFileName(fs.paths[i]), humanize_bytesize(f.size));
         }
     }
     else {
-        LOGF("\"%s\" is not a directory or does not exists", path);
+        LOG("\"%s\" is not a directory or does not exists", path);
         return ERROR_FILE_NOT_FOUND;
     }
 
     size_t total_size = 0;
     for (int i = 0; i < kv_size(*files); i++)
         total_size += kv_A(*files, i).size;
-    LOGF("total beatmap size is %s", humanize_bytesize(total_size));
+    LOG("total beatmap size is %s", humanize_bytesize(total_size));
 
     return ERROR_SUCCESS;
 }
@@ -264,14 +264,14 @@ bool parse_difficulty(file_t* file, beatmap_t* beatmap, difficulty_t* difficulty
         return false;
     }
     else if (err < 0) {
-        LOGF("failed to parse \"%s\": file IO error", difficulty->file_name);
+        LOG("failed to parse \"%s\": file IO error", difficulty->file_name);
         return false;
     }
 
     ks_introsort(hitobject_t, kv_size(difficulty->hitobjects), difficulty->hitobjects.a);
     ks_introsort(timing_point_t, kv_size(difficulty->timing_points), difficulty->timing_points.a);
 
-    LOGF("parsed \"%s\"", difficulty->file_name);
+    LOG("parsed \"%s\"", difficulty->file_name);
     return true;
 }
 
@@ -293,8 +293,8 @@ int ini_callback(void* user, const char* section, const char* line, int lineno) 
 
     if (section_hash == SECTION_GENERAL || section_hash == SECTION_METADATA || section_hash == SECTION_DIFFICULTY) {
         int delim_i = TextFindIndex(line, ":");
-        memcpy(key, line, MIN(delim_i, ARRAY_LENGTH(key)));
-        memcpy(value, skip_space(line + delim_i + 1), MIN(strlen(skip_space(line + delim_i + 1)), ARRAY_LENGTH(value)));
+        memcpy(key, line, MIN(delim_i, LENGTH(key)));
+        memcpy(value, skip_space(line + delim_i + 1), MIN(strlen(skip_space(line + delim_i + 1)), LENGTH(value)));
         key_hash = kh_str_hash_func(key);
     }
     else {
@@ -312,7 +312,7 @@ int ini_callback(void* user, const char* section, const char* line, int lineno) 
 
         case KEY_MODE:
             if (atoi(value) != 3) {
-                LOGF("failed to parse \"%s\": not an osu!mania beatmap (%s)", args->difficulty->file_name, line);
+                LOG("failed to parse \"%s\": not an osu!mania beatmap (%s)", args->difficulty->file_name, line);
                 return false;
             }
             break;
@@ -354,7 +354,7 @@ int ini_callback(void* user, const char* section, const char* line, int lineno) 
 
     case SECTION_TIMING_POINTS:
         if (params_count != 8) {
-            LOGF("failed to parse \"%s\": invalid timing point (\"%s\" at line %d)", args->difficulty->file_name, line, lineno);
+            LOG("failed to parse \"%s\": invalid timing point (\"%s\" at line %d)", args->difficulty->file_name, line, lineno);
             return false;
         }
 
@@ -369,7 +369,7 @@ int ini_callback(void* user, const char* section, const char* line, int lineno) 
         bool            is_first_tm     = kv_size(args->difficulty->timing_points) == 0;
 
         if (is_first_tm && !is_uninherited) {
-            LOGF("failed to parse \"%s\": first timing point can not be inhereited (\"%s\" at line %d)", args->difficulty->file_name, line, lineno);
+            LOG("failed to parse \"%s\": first timing point can not be inhereited (\"%s\" at line %d)", args->difficulty->file_name, line, lineno);
             return false;
         }
 
@@ -392,7 +392,7 @@ int ini_callback(void* user, const char* section, const char* line, int lineno) 
 
     case SECTION_HITOBJECTS:
         if (params_count < 5) {
-            LOGF("failed to parse \"%s\": invalid hit object (\"%s\" at line %d)", args->difficulty->file_name, line, lineno);
+            LOG("failed to parse \"%s\": invalid hit object (\"%s\" at line %d)", args->difficulty->file_name, line, lineno);
             return false;
         }
 
@@ -413,7 +413,7 @@ int ini_callback(void* user, const char* section, const char* line, int lineno) 
 
         int i = difficulty_get_timing_point_index_for_time(args->difficulty, time_strt);
         if (i < 0) {
-            LOGF(
+            LOG(
                 "failed to parse \"%s\":"
                 " hit object %ld does not have associated timing point"
                 " (\"%s\" at line %d)",

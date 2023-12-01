@@ -7,6 +7,7 @@
 
 #include "util.h"
 #include "beatmap.h"
+#include "logging.h"
 
 
 error_t playfield_create_from(difficulty_t* difficulty, playfield_t* playfield) {
@@ -57,7 +58,7 @@ error_t playfield_create_from(difficulty_t* difficulty, playfield_t* playfield) 
         }
     }
 
-    LOGF_SUCCESS("Created playfield from \"%s\"", difficulty->name);
+    LOG_SUCCESS("Created playfield from \"%s\"", difficulty->name);
     return ERROR_SUCCESS;
 }
 
@@ -73,19 +74,19 @@ void playfield_debug_print(playfield_t* playfield) {
     int c = 0;
     for (int i = 0; i < kv_size(playfield->columns); i++)
         c += kv_size(kv_A(playfield->columns, i).events);
-    LOGF_DESC("events[%d]:", c);
+    PRINTLN("events[%d]:", c);
     for (int i = 0; i < kv_size(playfield->columns); i++) {
         playfield_column_t* pc = &kv_A(playfield->columns, i);
 
         for (int j = 0; j < kv_size(pc->events); j++) {
             playfield_event_t* pe = &kv_A(pc->events, j);
-            LOGF_DESC("\tEV[%d]: %s at %8f", j, event_names[pe->type], pe->position);
+            PRINTLN("\tEV[%d]: %s at %8f", j, event_names[pe->type], pe->position);
         }
     }
 
-    LOGF_DESC("spd mods[%lu]:", kv_size(playfield->speed_mods));
+    PRINTLN("spd mods[%lu]:", kv_size(playfield->speed_mods));
     for (int i = 0; i < kv_size(playfield->speed_mods); i++) {
         playfield_speed_modifier_t* sm = &kv_A(playfield->speed_mods, i);
-        LOGF_DESC("\tSM[%d]: %8.f at %8.f", i, sm->speed, sm->position);
+        PRINTLN("\tSM[%d]: %8.f at %8.f", i, sm->speed, sm->position);
     }
 }

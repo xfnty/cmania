@@ -1,9 +1,5 @@
-/* References:
- *     https://osu.ppy.sh/wiki/en/Beatmap
- *     https://osu.ppy.sh/wiki/en/Client/File_formats/Osu_(file_format)
- */
-#ifndef BEATMAP_H
-#define BEATMAP_H
+#ifndef BEATMAP_H_
+#define BEATMAP_H_
 
 #include <stdbool.h>
 
@@ -11,12 +7,11 @@
 #include <raylib.h>
 
 #include "util.h"
+#include "types.h"
+#include "error.h"
 
 
 /* types */
-typedef float seconds_t;
-typedef float percentage_t;  // 1.0 is 100%
-
 typedef struct {
     seconds_t               time;
     float                   BPM;

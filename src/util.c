@@ -5,6 +5,9 @@
 
 #include <raylib.h>
 
+#include "error.h"
+#include "logging.h"
+
 
 static void _raylib_log_callback(int logLevel, const char *text, va_list args);
 
@@ -19,34 +22,34 @@ void logging_shutdown() {
 }
 
 void _raylib_log_callback(int logLevel, const char *text, va_list args) {
-    if (logLevel < LOG_WARNING)
-        return;
+    // if (logLevel < LOG_WARNING)
+    //     return;
 
-    char buffer[512] = {0};
-    vsnprintf(buffer, sizeof(buffer), text, args);
+    // char buffer[512] = {0};
+    // vsnprintf(buffer, sizeof(buffer), text, args);
 
-    switch (logLevel) {
-    case LOG_DEBUG:
-        LOGF_DEBUG("%s", buffer);
-        break;
+    // switch (logLevel) {
+    // case LOG_DEBUG:
+    //     LOG_DEBUG("%s", buffer);
+    //     break;
 
-    case LOG_WARNING:
-        LOGF_WARNING("%s", buffer);
-        break;
+    // case LOG_WARNING:
+    //     LOG_WARNING("%s", buffer);
+    //     break;
 
-    case LOG_ERROR:
-        LOGF_ERROR("%s", buffer);
-        break;
+    // case LOG_ERROR:
+    //     LOG_ERROR("%s", buffer);
+    //     break;
 
-    case LOG_FATAL:
-        LOGF_ERROR("%s", buffer);
-        break;
+    // case LOG_FATAL:
+    //     LOG_ERROR("%s", buffer);
+    //     break;
 
-    default:
-        break;
-    }
+    // default:
+    //     break;
+    // }
 
-    printf("%s", (logLevel == LOG_WARNING ? ANSI_YELLOW : ANSI_RED));
-    vprintf(text, args);
-    printf(ANSI_RESET "\n");
+    // printf("%s", (logLevel == LOG_WARNING ? ANSI_YELLOW : ANSI_RED));
+    // vprintf(text, args);
+    // printf(ANSI_RESET "\n");
 }

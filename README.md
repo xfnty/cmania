@@ -3,7 +3,7 @@ CMania is a Osu!mania clone made for offline practice.
 
 ## Building
 ```
-make args="./assets/map2.osz"
+make args="./assets/test"
 ```
 
 ## References
