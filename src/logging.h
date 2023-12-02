@@ -37,8 +37,8 @@
 #define LOG_ERROR(fmt, ...)       __LOG_LEVELNAME_BOILERPLATE(ANSI_COLOR_RED_BOLD, "error", fmt, ##__VA_ARGS__)
 #define LOG_FATAL_ERROR(fmt, ...) __LOG_LEVELNAME_BOILERPLATE(ANSI_COLOR_RED_BOLD, "fatal error", fmt, ##__VA_ARGS__)
 
-void logging_init();
-void logging_shutdown();
+// void logging_init();
+// void logging_shutdown();
 
 
 #endif

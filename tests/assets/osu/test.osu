@@ -1,0 +1,17 @@
+osu file format v14
+
+[General]
+Mode: 3
+
+[Difficulty]
+CircleSize:  4
+SliderMultiplier:2.1
+
+[TimingPoints]
+1000,333.33,4,0,0,100,1,0 # BPM 180
+2000,600,4,0,0,100,1,0    # BPM 100
+
+[HitObjects]
+256,192,1500,0,0,0:0:0:0:      # COL=2 time=1.5s
+384,192,2500,128,0,3500:0:0:0: # COL=3 start=2.5s end=3.5s
+

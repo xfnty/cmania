@@ -38,8 +38,10 @@ BUILD:=build b
 RUN:=run r
 DEBUG:=debug d
 TEST:=test t
+PROFILE:=profile p
 
 args?=
+gpargs?=-bp
 build_type?=Debug
 jobs?=4
 
@@ -77,6 +79,16 @@ $(TEST): build
 	-$(call cp,$(call path,"tests/assets/."),$(call path,"$(TEST_DIR)/assets"))
 	cd "$(TEST_DIR)" && "$(call exec,$(TEST_EXE))" --skip-benchmarks --allow-running-no-tests -v high $(args)
 
+bin/gmon.out:
+	echo ----- Running -----
+	-$(call cp,$(call path,"tests/assets/."),$(call path,"$(TEST_DIR)/assets"))
+	-$(call cp,$(call path,"assets/."),$(call path,"$(OUTPUT_DIR)/assets"))	
+	cd "$(OUTPUT_DIR)" && "$(call exec,$(EXE))" $(args)
+
+$(PROFILE): bin/gmon.out
+	echo ----- Profile Summary -----
+	cd "$(OUTPUT_DIR)" && gprof $(gpargs) "$(EXE)" gmon.out
+
 $(CMAKE_DIR):
 	echo ----- Configuring -----
 	mkdir -p "$(CMAKE_DIR)"
@@ -88,7 +100,7 @@ $(OUTPUT_DIR):
 	$(_BUILD)
 
 clean:
-	git clean -Xdfq
-# 	rm -rf "$(CMAKE_DIR)" "$(OUTPUT_DIR)" "$(TEST_DIR)" ".cache"
+# 	git clean -Xdfq
+	rm -rf "$(CMAKE_DIR)" "$(OUTPUT_DIR)" "$(TEST_DIR)" ".cache" "compile_commands.json"
 
-.PHONY=$(CONFIGURE) $(BUILD) $(RUN) $(DEBUG) clean
+.PHONY=$(CONFIGURE) $(BUILD) $(RUN) $(DEBUG) $(PROFILE) clean

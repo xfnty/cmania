@@ -7,6 +7,7 @@ include_directories(${INCLUDES} "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Catch2/s
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Catch2")
 
 add_executable("tests" ${TEST_SOURCES})
+message(STATUS "Linking tests to \"${PROJECT_LIBRARY_NAME}\"")
 target_link_libraries("tests" PRIVATE "${PROJECT_LIBRARY_NAME}" "Catch2::Catch2WithMain")
 
 set_target_properties(

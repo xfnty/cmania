@@ -14,17 +14,14 @@ project("cmania" LANGUAGES C CXX)
 
 
 # ===== Third Party libraries ===== #
-include_thirdparty("raylib" "src" "raylib")
-include_thirdparty("humanize" "src" "humanize")
 include_thirdparty("klib" "src" "klib")
-include_thirdparty("inih" "src" "inih")
 
 
 # ===== Source files ===== #
 set(SOURCE_MAIN "src/main.c")
 
 list_sources(SOURCES "src")
-list(FILTER SOURCES EXCLUDE REGEX "main\\.c.*")
+list(FILTER SOURCES EXCLUDE REGEX ${SOURCE_MAIN})
 
 
 # ===== Include directories ===== #
@@ -33,13 +30,14 @@ include_directories(${INCLUDES})
 
 
 # ===== Link libraries ===== #
-list(APPEND LINK_LIBRARIES "")
+list(APPEND LINK_LIBRARIES "m")
 link_libraries(${LINK_LIBRARIES})
 
 
 # ===== Targets ===== #
 if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
-    add_compile_options("-Wall")
+    add_compile_options("-Wall" "-pg")
+    add_link_options("-pg")
 endif()
 
 set(PROJECT_LIBRARY_NAME "${PROJECT_NAME}-shared")
