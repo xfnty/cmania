@@ -28,6 +28,8 @@ err_t osu_beatmap_create_from_str(osu_beatmap_t* beatmap, const char* const str)
     ASSERT(beatmap != NULL);
     ASSERT(str != NULL);
 
+    *beatmap = (osu_beatmap_t){0};
+
     const char* cursor = str;
     int current_section = 0;
     while (*cursor != '\0') {

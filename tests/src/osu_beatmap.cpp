@@ -49,6 +49,8 @@ TEST_CASE("Valid Osu Beatmap") {
     REQUIRE(kv_A(bm.timing_points, 1).start == 2);
     REQUIRE(kv_A(bm.timing_points, 1).SV == 5);
     REQUIRE(kv_A(bm.timing_points, 1).BPM == 180);
+
+    osu_beatmap_destroy(&bm);
 }
 
 TEST_CASE("Real Osu Beatmaps") {
