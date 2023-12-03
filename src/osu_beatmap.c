@@ -8,6 +8,7 @@
 #include <kvec.h>
 #include <khash.h>
 
+#include "file.h"
 #include "util.h"
 #include "error.h"
 #include "logging.h"
@@ -115,6 +116,16 @@ err_t osu_beatmap_create_from_str(osu_beatmap_t* beatmap, const char* const str)
     ASSERT_LOG_RETURN_VALUE(kv_size(beatmap->hitobjects) > 0, ERROR_UNDEFINED, "no hitobjects");
 
     return ERROR_SUCCESS;
+}
+
+err_t osu_beatmap_create_from_file(osu_beatmap_t* beatmap, const char* path) {
+    ASSERT(beatmap != NULL);
+    ASSERT(path != NULL);
+    file_t file = {0};
+    CHECK_ERROR_PROPAGATE(file_read(&file, path));
+    err_t err = osu_beatmap_create_from_str(beatmap, file.data);
+    file_free(&file);
+    return err;
 }
 
 void osu_beatmap_destroy(osu_beatmap_t* beatmap) {

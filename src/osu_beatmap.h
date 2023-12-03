@@ -33,6 +33,7 @@ extern "C" {
 #endif
 
 err_t osu_beatmap_create_from_str(osu_beatmap_t* beatmap, const char* const str);
+err_t osu_beatmap_create_from_file(osu_beatmap_t* beatmap, const char* path);
 void  osu_beatmap_destroy(osu_beatmap_t* beatmap);
 void  osu_beatmap_print(const osu_beatmap_t* beatmap);
 

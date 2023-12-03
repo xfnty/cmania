@@ -1,7 +1,10 @@
 #include <catch2/catch_message.hpp>
 #include <catch2/catch_test_macros.hpp>
 
+#include <filesystem>
+
 #include "error.h"
+#include "file.h"
 #include "kvec.h"
 #include "osu_beatmap.h"
 
@@ -46,4 +49,18 @@ TEST_CASE("Valid Osu Beatmap") {
     REQUIRE(kv_A(bm.timing_points, 1).start == 2);
     REQUIRE(kv_A(bm.timing_points, 1).SV == 5);
     REQUIRE(kv_A(bm.timing_points, 1).BPM == 180);
+}
+
+TEST_CASE("Real Osu Beatmaps") {
+    auto dir = std::filesystem::directory_iterator("./assets/osu/real");
+    for (const auto& dentry : dir) {
+        if (dentry.is_directory())
+            continue;
+
+        INFO("Loading real beatmap: " << dentry.path());
+        osu_beatmap_t bm = {0};
+        err_t err = osu_beatmap_create_from_file(&bm, dentry.path().c_str());
+        REQUIRE(err == ERROR_SUCCESS);
+        osu_beatmap_destroy(&bm);
+    }
 }
