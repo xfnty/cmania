@@ -145,7 +145,15 @@ void osu_beatmap_print(const osu_beatmap_t* beatmap) {
     LOG("Osu beatmap summary:");
     PRINTLN("  CS=%.1f SV=%.1f", beatmap->CS, beatmap->SV);
     PRINTLN("  hitobjects[%lu]", kv_size(beatmap->hitobjects));
+    for (int i = 0; i < kv_size(beatmap->hitobjects); i++) {
+        osu_hitobject_t* ho = &kv_A(beatmap->hitobjects, i);
+        PRINTLN("    %d: start=%.2f end=%.2f col=%d", i, ho->start, ho->end, ho->column);
+    }
     PRINTLN("  timing points[%lu]", kv_size(beatmap->timing_points));
+    for (int i = 0; i < kv_size(beatmap->timing_points); i++) {
+        osu_timing_point_t* tm = &kv_A(beatmap->timing_points, i);
+        PRINTLN("    %d: start=%.2f SV=%.2f BPM=%.2f", i, tm->start, tm->SV, tm->BPM);
+    }
 }
 
 const char* skip_over_whitespace(const char* s) {
