@@ -5,6 +5,7 @@
 # Folders
 bin/
 bin-tests/
+bin-sandbox/
 .ignore/
 .cache/
 .mkdoxy

@@ -32,6 +32,7 @@ OUTPUT_DIR:=bin
 EXE=$(PROJECT_NAME)
 TEST_EXE:=tests
 TEST_DIR=bin-tests
+SANDBOX_DIR=bin-sandbox
 
 CONFIGURE:=configure c
 BUILD:=build b
@@ -39,6 +40,7 @@ RUN:=run r
 DEBUG:=debug d
 TEST:=test t
 PROFILE:=profile p
+SANDBOX:=sandbox s
 
 args?=
 gpargs?=-bp
@@ -60,13 +62,13 @@ $(CONFIGURE):
 $(BUILD):
 	echo ----- Building -----
 	$(call mkdir,$(OUTPUT_DIR))
-	-$(call cp,$(call path,"tests/assets/."),$(call path,"$(TEST_DIR)/assets"))	
+	-$(call cp,$(call path,"tests/assets/."),$(call path,"bin-tests/assets"))	
+	-$(call cp,$(call path,"sandbox/assets/."),$(call path,"bin-sandbox/assets"))	
 	-$(call cp,$(call path,"assets/."),$(call path,"$(OUTPUT_DIR)/assets"))	
 	$(_BUILD)
 
 $(RUN):
 	echo ----- Running -----
-	-$(call cp,$(call path,"tests/assets/."),$(call path,"$(TEST_DIR)/assets"))
 	-$(call cp,$(call path,"assets/."),$(call path,"$(OUTPUT_DIR)/assets"))	
 	cd "$(OUTPUT_DIR)" && "$(call exec,$(EXE))" $(args)
 
@@ -81,13 +83,17 @@ $(TEST): build
 
 bin/gmon.out:
 	echo ----- Running -----
-	-$(call cp,$(call path,"tests/assets/."),$(call path,"$(TEST_DIR)/assets"))
 	-$(call cp,$(call path,"assets/."),$(call path,"$(OUTPUT_DIR)/assets"))	
 	cd "$(OUTPUT_DIR)" && "$(call exec,$(EXE))" $(args)
 
 $(PROFILE): bin/gmon.out
 	echo ----- Profile Summary -----
 	cd "$(OUTPUT_DIR)" && gprof $(gpargs) "$(EXE)" gmon.out
+
+$(SANDBOX): build
+	echo ----- Running Sandbox -----
+	-$(call cp,$(call path,"sandbox/assets/."),$(call path,"bin-sandbox/assets"))	
+	cd "$(SANDBOX_DIR)" && "$(call exec,"sandbox")" $(args)
 
 $(CMAKE_DIR):
 	echo ----- Configuring -----

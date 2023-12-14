@@ -11,6 +11,7 @@
 typedef enum {
     ERROR_SUCCESS,
     ERROR_UNDEFINED,
+    ERROR_INVALID_VALUE,
     /* IO */
     ERROR_FILE_NOT_FOUND,
     ERROR_FILE_IO,
@@ -20,6 +21,7 @@ typedef enum {
 static const char* ERROR_MESSAGES[] = {
     [ERROR_SUCCESS]         = "OK",
     [ERROR_UNDEFINED]       = "Undefined error",
+    [ERROR_INVALID_VALUE]   = "Invalid value",
     [ERROR_FILE_NOT_FOUND]  = "File not found",
     [ERROR_FILE_IO]         = "Read/write opeartion failed"
 };

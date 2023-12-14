@@ -3,8 +3,14 @@ CMania is a Osu!mania clone made for offline practice.
 
 ## Building
 ```
-make args="./assets/test"
+make args="./assets/test.osu"
 ```
+
+## TODO
+- Use `goto Failure` instead of `ASSERT_RETURN` macros.
+- Rewrite or fix `sscanf` related code.
+- Setup valgrind
+- Improve Makefile
 
 ## References
 - [`.osu` File format](https://osu.ppy.sh/wiki/en/Client/File_formats/Osu_(file_format))

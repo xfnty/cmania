@@ -73,8 +73,8 @@ typedef struct {
 
 #define KSORT_SWAP(type_t, a, b) { register type_t t=(a); (a)=(b); (b)=t; }
 
-#define KSORT_INIT(name, type_t, __sort_lt)								\
-	void ks_mergesort_##name(size_t n, type_t array[], type_t temp[])	\
+#define KSORT_INIT_EX(name, type_t, scope, __sort_lt)					\
+	scope void ks_mergesort_##name(size_t n, type_t array[], type_t temp[])	\
 	{																	\
 		type_t *a2[2], *a, *b;											\
 		int curr, shift;												\
@@ -122,7 +122,7 @@ typedef struct {
 		}																\
 		if (temp == 0) free(a2[1]);										\
 	}																	\
-	void ks_heapadjust_##name(size_t i, size_t n, type_t l[])			\
+	scope void ks_heapadjust_##name(size_t i, size_t n, type_t l[])		\
 	{																	\
 		size_t k = i;													\
 		type_t tmp = l[i];												\
@@ -133,13 +133,13 @@ typedef struct {
 		}																\
 		l[i] = tmp;														\
 	}																	\
-	void ks_heapmake_##name(size_t lsize, type_t l[])					\
+	scope void ks_heapmake_##name(size_t lsize, type_t l[])				\
 	{																	\
 		size_t i;														\
 		for (i = (lsize >> 1) - 1; i != (size_t)(-1); --i)				\
 			ks_heapadjust_##name(i, lsize, l);							\
 	}																	\
-	void ks_heapsort_##name(size_t lsize, type_t l[])					\
+	scope void ks_heapsort_##name(size_t lsize, type_t l[])				\
 	{																	\
 		size_t i;														\
 		for (i = lsize - 1; i > 0; --i) {								\
@@ -147,7 +147,7 @@ typedef struct {
 			tmp = *l; *l = l[i]; l[i] = tmp; ks_heapadjust_##name(0, i, l); \
 		}																\
 	}																	\
-	static inline void __ks_insertsort_##name(type_t *s, type_t *t)			\
+	static inline void __ks_insertsort_##name(type_t *s, type_t *t)		\
 	{																	\
 		type_t *i, *j, swap_tmp;										\
 		for (i = s + 1; i < t; ++i)										\
@@ -155,7 +155,7 @@ typedef struct {
 				swap_tmp = *j; *j = *(j-1); *(j-1) = swap_tmp;			\
 			}															\
 	}																	\
-	void ks_combsort_##name(size_t n, type_t a[])						\
+	scope void ks_combsort_##name(size_t n, type_t a[])					\
 	{																	\
 		const double shrink_factor = 1.2473309501039786540366528676643; \
 		int do_swap;													\
@@ -177,7 +177,7 @@ typedef struct {
 		} while (do_swap || gap > 2);									\
 		if (gap != 1) __ks_insertsort_##name(a, a + n);					\
 	}																	\
-	void ks_introsort_##name(size_t n, type_t a[])						\
+	scope void ks_introsort_##name(size_t n, type_t a[])				\
 	{																	\
 		int d;															\
 		ks_isort_stack_t *top, *stack;									\
@@ -230,7 +230,7 @@ typedef struct {
 	}																	\
 	/* This function is adapted from: http://ndevilla.free.fr/median/ */ \
 	/* 0 <= kk < n */													\
-	type_t ks_ksmall_##name(size_t n, type_t arr[], size_t kk)			\
+	scope type_t ks_ksmall_##name(size_t n, type_t arr[], size_t kk)	\
 	{																	\
 		type_t *low, *high, *k, *ll, *hh, *mid;							\
 		low = arr; high = arr + n - 1; k = arr + kk;					\
@@ -257,7 +257,7 @@ typedef struct {
 			if (hh >= k) high = hh - 1;									\
 		}																\
 	}																	\
-	void ks_shuffle_##name(size_t n, type_t a[])						\
+	scope void ks_shuffle_##name(size_t n, type_t a[])					\
 	{																	\
 		int i, j;														\
 		for (i = n; i > 1; --i) {										\
@@ -266,7 +266,7 @@ typedef struct {
 			tmp = a[j]; a[j] = a[i-1]; a[i-1] = tmp;					\
 		}																\
 	}																	\
-	void ks_sample_##name(size_t n, size_t r, type_t a[]) /* FIXME: NOT TESTED!!! */ \
+	scope void ks_sample_##name(size_t n, size_t r, type_t a[]) /* FIXME: NOT TESTED!!! */ \
 	{ /* reference: http://code.activestate.com/recipes/272884/ */ \
 		int i, k, pop = n; \
 		for (i = (int)r, k = 0; i >= 0; --i) { \
@@ -277,6 +277,7 @@ typedef struct {
 			++k; \
 		} \
 	}
+#define KSORT_INIT(name, type_t, __sort_lt) KSORT_INIT_EX(name, type_t, ;, __sort_lt)
 
 #define ks_mergesort(name, n, a, t) ks_mergesort_##name(n, a, t)
 #define ks_introsort(name, n, a) ks_introsort_##name(n, a)

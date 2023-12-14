@@ -1,10 +1,6 @@
-#include "file.h"
-#include "util.h"
 #include "error.h"
-#include "types.h"
+#include "beatmap.h"
 #include "logging.h"
-#include "osu_beatmap.h"
-#include "cmania_beatmap.h"
 
 
 int main(int argc, const char *argv[]) {
@@ -13,15 +9,11 @@ int main(int argc, const char *argv[]) {
         return 0;
     }
 
-    osu_beatmap_t bm = {0};
-    CHECK_ERROR_LOG_RETURN_VALUE(osu_beatmap_create_from_file(&bm, argv[1]), -1, "could not parse beatmap file");
-    osu_beatmap_print(&bm);
+    beatmap_t beatmap = {0};
+    CHECK_ERROR_LOG_RETURN_VALUE(beatmap_create_from_file(&beatmap, argv[1]), -1, "Could not load \"%s\"", argv[1]);
 
-    cmania_beatmap_t cbm = {0};
-    CHECK_ERROR_LOG_RETURN_VALUE(cmania_beatmap_create_from_osu_beatmap(&cbm, &bm), -2, "failed to convert Osu beatmap to CMania beatmap");
-    cmania_beatmap_print(&cbm);
+    beatmap_print(&beatmap);
 
-    osu_beatmap_destroy(&bm);
-    cmania_beatmap_destroy(&cbm);
+    beatmap_destroy(&beatmap);
     return 0;
 }
